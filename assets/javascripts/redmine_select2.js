@@ -30,6 +30,34 @@
   // Campos que aparecem após uma mudança (ex.: adicionar filtro)
   $(document).on('change', 'select', function () { setTimeout(apply, 0); });
 
+  // Campos que ficam visíveis sem AJAX/change (ex.: botão "Editar" da tarefa,
+  // que apenas exibe o formulário #update). Agrupa as mutações em um único apply.
+  var pending = null;
+  function schedule() {
+    if (pending) return;
+    pending = setTimeout(function () { pending = null; apply(); }, 50);
+  }
+  if (window.MutationObserver) {
+    $(function () {
+      new MutationObserver(schedule).observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style', 'class', 'hidden']
+      });
+    });
+  }
+
+  // Garantia: se o usuário clicar num <select> nativo ainda sem Select2,
+  // aplica na hora e abre o dropdown do Select2 no lugar do nativo.
+  $(document).on('mousedown', 'select', function (e) {
+    var $el = $(this);
+    if ($el.is(IGNORE)) return;
+    e.preventDefault();
+    apply($el.parent());
+    if ($el.hasClass('select2-hidden-accessible')) $el.select2('open');
+  });
+
   // Botão "+" de multi-seleção dos filtros do Redmine
   $(document).on('click', '.toggle-multiselect', function () {
     var $select = $(this).siblings('select');
