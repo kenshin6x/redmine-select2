@@ -2,7 +2,7 @@ Redmine::Plugin.register :redmine_select2 do
   name        'Redmine Select2'
   author      'Junior Andrade'
   description 'Aplica o Select2 em todos os campos <select> do Redmine.'
-  version     '1.0.0'
+  version     '1.0.1'
   url         'https://github.com/kenshin6x/redmine-select2'
   requires_redmine version_or_higher: '4.0.0'
 end
